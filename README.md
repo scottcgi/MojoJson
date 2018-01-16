@@ -1,6 +1,6 @@
 ## MojoUnityJson v1.0
 
-MojoUnityJson is an extremely simple and super fast JSON parser for c#. The core parsing code only 450 lines, and supports all standard Json formats. Also the MojoUnityJson provides simple APIs for visit different types of the Json values. The implementation depends only on the core .NET lib. Currently, the MojoUnityJson has only one file, can easily integrated into any C# project.
+MojoUnityJson is an extremely simple and super fast JSON parser for c#. The core parsing code only 450 lines, and supports all standard Json formats. Also the MojoUnityJson provides simple APIs for visit different types of the Json values. The implementation only use the core .NET lib. Currently, the MojoUnityJson just has one file that can be easily integrated into any C# project.
 
 * Released version in [releases](https://github.com/scottcgi/MojoUnityJson/releases).
 * Release changes in [changelog](https://github.com/scottcgi/MojoUnityJson/blob/master/ChangeLog.md).
