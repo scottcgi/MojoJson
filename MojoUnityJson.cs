@@ -1,6 +1,6 @@
 ﻿/*
 ------------------------------------------------------------------------------------------------------------------------
- * Copyright (c) 2018 scott.cgi All Rights Reserved.
+ * Copyright (c) 2017-2018 scott.cgi All Rights Reserved.
  *
  * Since  : 2017-9-6
  * Author : scott.cgi
