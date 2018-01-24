@@ -4,7 +4,7 @@
  *
  * Since  : 2017-9-6
  * Author : scott.cgi
- * Version: 1.0
+ * Version: 1.0.1
  * Update : 2018-1-15
 ------------------------------------------------------------------------------------------------------------------------
  */
@@ -139,7 +139,6 @@ namespace MojoUnity
                     data.json[data.index]
                 );
 
-
                 // skip '"'
                 data.index++;
 
@@ -172,6 +171,7 @@ namespace MojoUnity
                 var key = data.json.Substring(start, data.index - start - 1);
 
                 SkipWhiteSpace(ref data);
+
                 DebugTool.Assert
                 (
                     data.json[data.index] == ':',  
@@ -190,11 +190,10 @@ namespace MojoUnity
 
                 if (data.json[data.index] == ',')
                 {
-                    data.index++ ;                   
+                    data.index++;                   
                 }
                 else
                 {
-                    SkipWhiteSpace(ref data);
                     DebugTool.Assert
                     (
                         data.json[data.index] == '}',  
@@ -246,7 +245,6 @@ namespace MojoUnity
                 }
                 else
                 {
-                    SkipWhiteSpace(ref data);
                     DebugTool.Assert
                     (
                         data.json[data.index] == ']',  
@@ -280,11 +278,11 @@ namespace MojoUnity
             {
                 switch (data.json[data.index++])
                 {
+                    // check string end '"' 
                     case '"':
-                        // check end '"'                        
-
                         if (data.sb.Length == 0)
                         {
+                            // no escaped char just Substring
                             str = data.json.Substring(start, data.index - start - 1);
                         }
                         else
@@ -295,10 +293,9 @@ namespace MojoUnity
                         }
                         break;
 
-                    case '\\':
+                    // check escaped char
+                    case '\\':  
                     {
-                        // check escaped char
-
                         var  escapedIndex = data.index;
                         char c;
 
