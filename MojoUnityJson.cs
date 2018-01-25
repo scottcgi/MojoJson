@@ -4,8 +4,8 @@
  *
  * Since  : 2017-9-6
  * Author : scott.cgi
- * Version: 1.0.1
- * Update : 2018-1-15
+ * Version: 1.1.5
+ * Update : 2018-1-25
 ------------------------------------------------------------------------------------------------------------------------
  */
 
@@ -27,8 +27,7 @@ namespace MojoUnity
         /// </summary>
         public static JsonValue Parse(string json)
         {
-            var data = new Data(json, 0);
-            return ParseValue(ref data);
+            return ParseValue(new Data(json));
         }
 
         #endregion
@@ -39,21 +38,21 @@ namespace MojoUnity
         /// <summary>
         /// Parse the JsonValue.
         /// </summary>
-        private static JsonValue ParseValue(ref Data data)
+        private static JsonValue ParseValue(Data data)
         {
-            SkipWhiteSpace(ref data);
+            SkipWhiteSpace(data);
             var c = data.json[data.index];
 
             switch (c)
             {
                 case '{':
-                    return ParseObject(ref data);
+                    return ParseObject(data);
 
                 case '[':
-                    return ParseArray (ref data);
+                    return ParseArray (data);
 
                 case '"':
-                    return ParseString(ref data);
+                    return ParseString(data);
 
                 case '0':
                 case '1':
@@ -66,7 +65,7 @@ namespace MojoUnity
                 case '8':
                 case '9':
                 case '-':
-                    return ParseNumber(ref data);
+                    return ParseNumber(data);
 
                 case 'f':
                     if 
@@ -78,7 +77,7 @@ namespace MojoUnity
                     )
                     {
                         data.index += 5;
-                        return new JsonValue(JsonType.Bool, false);
+                        return new JsonValue(JsonType.Bool, 0.0f);
                     }
                     break;
 
@@ -91,7 +90,7 @@ namespace MojoUnity
                     )
                     {
                         data.index += 4;
-                        return new JsonValue(JsonType.Bool, true);
+                        return new JsonValue(JsonType.Bool, 1.0f);
                     }
                     break;
 
@@ -116,7 +115,7 @@ namespace MojoUnity
         /// <summary>
         /// Parse JsonObject.
         /// </summary>
-        private static JsonValue ParseObject(ref Data data)
+        private static JsonValue ParseObject(Data data)
         {
             var jsonObject = new Dictionary<string, JsonValue>(JsonObjectInitCapacity);
 
@@ -125,7 +124,7 @@ namespace MojoUnity
 
             do
             {
-                SkipWhiteSpace(ref data);
+                SkipWhiteSpace(data);
 
                 if (data.json[data.index] == '}')
                 {
@@ -150,8 +149,8 @@ namespace MojoUnity
 
                     switch (c)
                     {
+                        // check end '"'
                         case '"':
-                            // check end '"'
                             break;
 
                         case '\\':
@@ -170,7 +169,7 @@ namespace MojoUnity
                 // get object key string
                 var key = data.json.Substring(start, data.index - start - 1);
 
-                SkipWhiteSpace(ref data);
+                SkipWhiteSpace(data);
 
                 DebugTool.Assert
                 (
@@ -184,9 +183,9 @@ namespace MojoUnity
                 data.index++;
 
                 // set JsonObject key and value
-                jsonObject.Add(key, ParseValue(ref data));
+                jsonObject.Add(key, ParseValue(data));
 
-                SkipWhiteSpace(ref data);
+                SkipWhiteSpace(data);
 
                 if (data.json[data.index] == ',')
                 {
@@ -218,7 +217,7 @@ namespace MojoUnity
         /// <summary>
         /// Parse JsonArray.
         /// </summary>
-        private static JsonValue ParseArray(ref Data data)
+        private static JsonValue ParseArray(Data data)
         {
             var jsonArray = new List<JsonValue>(JsonArrayInitCapacity);
 
@@ -227,7 +226,7 @@ namespace MojoUnity
 
             do
             {
-                SkipWhiteSpace(ref data);
+                SkipWhiteSpace(data);
 
                 if (data.json[data.index] == ']')
                 {
@@ -235,9 +234,9 @@ namespace MojoUnity
                 }
 
                 // add JsonArray item 
-                jsonArray.Add(ParseValue(ref data));
+                jsonArray.Add(ParseValue(data));
 
-                SkipWhiteSpace(ref data);
+                SkipWhiteSpace(data);
 
                 if (data.json[data.index] == ',')
                 {
@@ -266,7 +265,7 @@ namespace MojoUnity
         /// <summary>
         /// Parses the JsonString.
         /// </summary>
-        private static JsonValue ParseString(ref Data data)
+        private static JsonValue ParseString(Data data)
         {
             // skip '"'
             data.index++;
@@ -305,16 +304,24 @@ namespace MojoUnity
                                 c = '"';
                                 break;
 
-                            case '\'':
-                                c = '\'';
-                                break;
-
                             case '\\':
                                 c = '\\';
                                 break;
 
                             case '/':
                                 c = '/';
+                                break;
+
+                            case '\'':
+                                c = '\'';
+                                break;
+
+                            case 'b':
+                                c = '\b';
+                                break;
+
+                            case 'f':
+                                c = '\f';
                                 break;
 
                             case 'n':
@@ -370,7 +377,7 @@ namespace MojoUnity
         /// <summary>
         /// Parses the JsonNumber.
         /// </summary>
-        private static JsonValue ParseNumber(ref Data data)
+        private static JsonValue ParseNumber(Data data)
         {
             var start = data.index;
                 
@@ -416,7 +423,7 @@ namespace MojoUnity
         /// <summary>
         /// Skip the white space.
         /// </summary>
-        private static void SkipWhiteSpace(ref Data data)
+        private static void SkipWhiteSpace(Data data)
         {
             while (true)
             {
@@ -458,36 +465,49 @@ namespace MojoUnity
             switch (c)
             {
                 case '0':
+                    return 0;
                 case '1':
+                    return 1;
                 case '2':
+                    return 2;
                 case '3':
+                    return 3;
                 case '4':
+                    return 4;
                 case '5':
+                    return 5;
                 case '6':
+                    return 6;
                 case '7':
+                    return 7;
                 case '8':
+                    return 8;
                 case '9':
-                    return c - '0';
-
-                case 'a':
-                case 'b':
-                case 'c':
-                case 'd':
-                case 'e':
-                case 'f':
-                    return c - 'a' + 10;
+                    return 9;
 
                 case 'A':
+                case 'a':
+                    return 10;
                 case 'B':
+                case 'b':
+                    return 11;
                 case 'C':
+                case 'c':
+                    return 12;
                 case 'D':
+                case 'd':
+                    return 13;
                 case 'E':
+                case 'e':
+                    return 14;
                 case 'F':
-                    return c - 'A' + 10;
+                case 'f':
+                    return 15;
             }
 
             throw new Exception(string.Format("Json Unicode char '{0}' error", c));
         }
+
 
         #endregion
 
@@ -495,21 +515,20 @@ namespace MojoUnity
 //----------------------------------------------------------------------------------------------------------------------
 
 
-        private struct Data
+        private class Data
         {
             public string        json;
             public int           index;
             public StringBuilder sb;
 
 
-            public Data(string json, int index)
+            public Data(string json)
             {
                 this.json  = json;
-                this.index = index;
+                this.index = 0;
                 this.sb    = new StringBuilder();
             }
         }
-
     }
 
 
@@ -533,29 +552,21 @@ namespace MojoUnity
     public class JsonValue
     {
         public  readonly JsonType type;
-        private object   objValue;
-        private float    floatValue;
-        private bool     boolValue;
+        private object   objectValue;
+        private float    numberValue;
 
 
-        public JsonValue(JsonType type, object objValue)
+        public JsonValue(JsonType type, object value)
         {
-            this.type     = type;
-            this.objValue = objValue;
+            this.type        = type;
+            this.objectValue = value;
         }
 
 
-        public JsonValue(JsonType type, float floatValue)
+        public JsonValue(JsonType type, float value)
         {
-            this.type       = type;
-            this.floatValue = floatValue;
-        }
-
-
-        public JsonValue(JsonType type, bool boolValue)
-        {
-            this.type      = type;
-            this.boolValue = boolValue;
+            this.type        = type;
+            this.numberValue = value;
         }
 
 
@@ -571,7 +582,7 @@ namespace MojoUnity
         public Dictionary<string, JsonValue> AsObject()
         {
             DebugTool.Assert(this.type == JsonType.Object, "JsonValue type is not Object !");
-            return this.objValue as Dictionary<string, JsonValue>;
+            return this.objectValue as Dictionary<string, JsonValue>;
         }
 
 
@@ -582,7 +593,7 @@ namespace MojoUnity
         public JsonValue AsObjectGet(string key)
         {
             DebugTool.Assert(this.type == JsonType.Object, "JsonValue type is not Object !");
-            var dict = this.objValue as Dictionary<string, JsonValue>;
+            var dict = this.objectValue as Dictionary<string, JsonValue>;
 
             JsonValue jsonValue;
 
@@ -771,7 +782,7 @@ namespace MojoUnity
         public List<JsonValue> AsArray()
         {
             DebugTool.Assert(this.type == JsonType.Array, "JsonValue type is not Array !");
-            return this.objValue as List<JsonValue>;
+            return this.objectValue as List<JsonValue>;
         }
 
 
@@ -781,7 +792,7 @@ namespace MojoUnity
         public JsonValue AsArrayGet(int index)
         {
             DebugTool.Assert(this.type == JsonType.Array, "JsonValue type is not Array !");
-            return (this.objValue as List<JsonValue>)[index];
+            return (this.objectValue as List<JsonValue>)[index];
         }
 
 
@@ -863,7 +874,7 @@ namespace MojoUnity
         public string AsString()
         {
             DebugTool.Assert(this.type == JsonType.String, "JsonValue type is not String !");
-            return this.objValue as string;
+            return this.objectValue as string;
         }
 
 
@@ -873,7 +884,7 @@ namespace MojoUnity
         public float AsFloat()
         {
             DebugTool.Assert(this.type == JsonType.Number, "JsonValue type is not Number !");
-            return this.floatValue;
+            return this.numberValue;
         }
 
 
@@ -883,7 +894,7 @@ namespace MojoUnity
         public int AsInt()
         {
             DebugTool.Assert(this.type == JsonType.Number, "JsonValue type is not Number !");
-            return (int) this.floatValue;
+            return (int) this.numberValue;
         }
 
 
@@ -893,7 +904,7 @@ namespace MojoUnity
         public bool AsBool()
         {
             DebugTool.Assert(this.type == JsonType.Bool, "JsonValue type is not Bool !");
-            return this.boolValue;
+            return this.numberValue > 0.0f;
         }
 
 
