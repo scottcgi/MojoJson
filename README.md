@@ -33,19 +33,19 @@ MojoUnityJson is licensed under the [MIT License](https://github.com/scottcgi/Mo
   * ##### JsonValue is int
   
     ```csharp
-    public float AsInt();
+    public int AsInt();
     ```    
     
   * ##### JsonValue is bool
   
     ```csharp
-    public float AsBool();
+    public bool AsBool();
     ```    
     
   * ##### JsonValue is null
   
     ```csharp
-    public float IsNull();
+    public bool IsNull();
     ```  
 
   * ##### JsonValue is JsonObject
