@@ -1,3 +1,10 @@
+## v1.1.8
+_`2018.2.5 UTC+8 10:51`_
+* Optimize ParseArray and ParseObject that remove redundant variable assignment. (+0.0.2)
+* Optimize DebutTool Assert call. (+0.0.1)
+
+
+
 ## v1.1.5
 _`2018.1.25 UTC+8 16:57`_
 * Code format.(+0.0.1)
