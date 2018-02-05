@@ -6,8 +6,8 @@
  *
  * Since  : 2017-9-6
  * Author : scott.cgi
- * Version: 1.1.5
- * Update : 2018-1-25
+ * Version: 1.1.8
+ * Update : 2018-2-5
 ------------------------------------------------------------------------------------------------------------------------
  */
 
@@ -43,9 +43,8 @@ namespace MojoUnity
         private static JsonValue ParseValue(Data data)
         {
             SkipWhiteSpace(data);
-            var c = data.json[data.index];
 
-            switch (c)
+            switch (data.json[data.index])
             {
                 case '{':
                     return ParseObject(data);
@@ -110,7 +109,15 @@ namespace MojoUnity
                     break;
             }
 
-            throw new Exception(string.Format("Json ParseValue error on char '{0}' index in '{1}' ", c, data.index));
+            throw new Exception
+            (
+                string.Format
+                (
+                    "Json ParseValue error on char '{0}' index at '{1}' ", 
+                    data.json[data.index], 
+                    data.index
+                )
+            );
         }
 
 
@@ -147,9 +154,7 @@ namespace MojoUnity
 
                 while (true)
                 {
-                    var c = data.json[data.index++];
-
-                    switch (c)
+                    switch (data.json[data.index++])
                     {
                         // check end '"'
                         case '"':
@@ -198,10 +203,9 @@ namespace MojoUnity
                     DebugTool.Assert
                     (
                         data.json[data.index] == '}',  
-                        "Json ParseObject error, after key = {0}, char '{1}' should be '{2}' ",
+                        "Json ParseObject error, after key = {0}, char '{1}' should be '}' ",
                         key,
-                        data.json[data.index],
-                        '}'
+                        data.json[data.index]
                     );
 
                     break;
