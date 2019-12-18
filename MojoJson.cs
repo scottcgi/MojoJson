@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System.Text;
 using System;
 
-namespace MojoUnity
+namespace MojoJson
 {
     public static class Json 
     {
