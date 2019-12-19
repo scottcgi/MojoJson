@@ -1,5 +1,4 @@
 ﻿/*
-------------------------------------------------------------------------------------------------------------------------
  * Copyright (c) 2017-2019 scott.cgi All Rights Reserved.
  * 
  * This source code belongs to project MojoJson, which is hosted on GitHub, and licensed under the MIT License.
@@ -11,7 +10,6 @@
  * Author : scott.cgi
  * Version: 1.1.8
  * Update : 2018-2-5
-------------------------------------------------------------------------------------------------------------------------
  */
 
 using System.Collections.Generic;
