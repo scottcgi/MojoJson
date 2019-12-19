@@ -8,8 +8,8 @@ MojoJson is an **extremely simple** and **super fast** JSON parser. The parser s
 
 The current implementations as follow:
 
-* For C#. 
-  The core parsing code only 400 lines, and implementation only use the core .NET lib. Currently, and just has one file that can be easily integrated into any C# project.
+* For C#.   
+The core parsing code only 400 lines, and the implementation only use the core .NET lib, and just has one file that can be easily integrated into any C# project.
 
 
 ## License
