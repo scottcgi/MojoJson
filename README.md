@@ -1,13 +1,19 @@
 ## MojoJson v1.1.8
 
-MojoJson is an **extremely simple** and **super fast** general **JSON parser** algorithm. It can be easily implemented by various programming languages, and the current implementations as follow:
+MojoJson is an **extremely simple** and **super fast** JSON parser. The parser supports all **standard** Json formats and provides **simple** APIs for visit different types of the Json values. Also the **core algorithm** can be easily implemented by various programming languages.
+
+* Released version in [releases](https://github.com/scottcgi/MojoJson/releases).
+* Release changes in [ChangeLog](https://github.com/scottcgi/MojoJson/blob/master/ChangeLog.md).
+
+
+The current implementations as follow:
 
 * For C#. 
-
-  The core parsing code only 450 lines, and supports all standard Json formats. Also the MojoJson provides simple APIs for visit different types of the Json values. The implementation only use the core .NET lib. Currently, the MojoJson just has one file that can be easily integrated into any C# project.
+  The core parsing code only 400 lines, and implementation only use the core .NET lib. Currently, and just has one file that can be easily integrated into any C# project.
 
 
 ## License
+
 MojoJson is licensed under the [MIT License](https://github.com/scottcgi/MojoJson/blob/master/LICENSE).
 
 ## How to use
@@ -89,3 +95,8 @@ MojoJson is licensed under the [MIT License](https://github.com/scottcgi/MojoJso
 ## How was born
 
 The original implementation and core algorithm came from the [Json.h](https://github.com/scottcgi/Mojoc/blob/master/Engine/Toolkit/Utils/Json.h) of the pure C game engine [Mojoc](https://github.com/scottcgi/Mojoc).
+
+
+## Support
+
+If the source code is **useful** for you, maybe you could buy me a coffee via [Paypal-0.99](https://www.paypal.me/PayScottcgi/0.99) :coffee:

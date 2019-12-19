@@ -1,8 +1,11 @@
 ﻿/*
 ------------------------------------------------------------------------------------------------------------------------
- * Copyright (c) 2017-2018 scott.cgi All Rights Reserved.
+ * Copyright (c) 2017-2019 scott.cgi All Rights Reserved.
  * 
- * This code is licensed under the MIT License.
+ * This source code belongs to project MojoJson, which is hosted on GitHub, and licensed under the MIT License.
+ *
+ * License: https://github.com/scottcgi/MojoJson/blob/master/LICENSE
+ * GitHub : https://github.com/scottcgi/MojoJson
  *
  * Since  : 2017-9-6
  * Author : scott.cgi
