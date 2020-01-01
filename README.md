@@ -27,14 +27,14 @@ MojoJson is licensed under the [MIT License](https://github.com/scottcgi/MojoJso
   var jsonValue = MojoJson.Json.Parse(string jsonString);
   ```
 
-  * Whether to convert escaped strings when `ParseString`.
+  * Whether to convert escaped strings when **ParseString**.
 
   ```csharp
   /// default false
   MojoJson.Json.SetEscapeString(bool isEscapeString)
   ```
 
-  * JsonValue is `primitive` type.
+  * JsonValue is **primitive** type.
 
   ```csharp
   public string AsString();
@@ -44,7 +44,7 @@ MojoJson is licensed under the [MIT License](https://github.com/scottcgi/MojoJso
   public bool   IsNull();
   ```
   
-  * JsonValue is `JsonObject` 
+  * JsonValue is **JsonObject** 
 
   ```csharp
   /// Get the JsonObject, that is a set of k-v pairs, and each value is JsonValue.
@@ -75,7 +75,7 @@ MojoJson is licensed under the [MIT License](https://github.com/scottcgi/MojoJso
   public bool AsObjectGetIsNull(string key);
   ```
 
-  * JsonValue is `JsonArray`.
+  * JsonValue is **JsonArray**.
 
   ```csharp
   /// Get the JsonArray, that is JsonValue list.
