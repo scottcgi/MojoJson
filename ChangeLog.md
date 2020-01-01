@@ -1,3 +1,9 @@
+## v1.2.0
+_`2020.1.1 UTC+8 11:16`_
+* Optimize unicode string parsing.
+* Add `SkipString` for `ParseObject`.
+* Add `SetEscapeString` for whether to convert escaped strings.
+
 ## v1.1.8
 _`2018.2.5 UTC+8 10:51`_
 * Optimize ParseArray and ParseObject that remove redundant variable assignment. (+0.0.2)

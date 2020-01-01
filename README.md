@@ -1,4 +1,4 @@
-## MojoJson v1.1.8
+## MojoJson v1.2.0
 
 MojoJson is an **extremely simple** and **super fast** JSON parser. The parser supports all **standard** Json formats and provides **simple** APIs for visit different types of the Json values. Also the **core algorithm** can be easily implemented by various programming languages.
 
@@ -9,7 +9,8 @@ MojoJson is an **extremely simple** and **super fast** JSON parser. The parser s
 The current implementations as follow:
 
 * For C#.   
-The core parsing code only 400 lines, and the implementation only use the core .NET lib, and just has one file that can be easily integrated into any C# project.
+  
+  The core parsing code only 400 lines, and the implementation only use the core .NET lib, and just has one file that can be easily integrated into any C# project.
 
 
 ## License
@@ -20,20 +21,32 @@ MojoJson is licensed under the [MIT License](https://github.com/scottcgi/MojoJso
 
 * For C#
 
+  * Parse Json string.
+
   ```csharp
-  // Parsing Json string
-  var jsonValue = MojoJson.Json.Parse(jsonString);
+  var jsonValue = MojoJson.Json.Parse(string jsonString);
+  ```
 
-  /* JsonValue is primitive type */
+  * Whether to convert escaped strings when `ParseString`.
 
+  ```csharp
+  /// default false
+  MojoJson.Json.SetEscapeString(bool isEscapeString)
+  ```
+
+  * JsonValue is `primitive` type.
+
+  ```csharp
   public string AsString();
   public float  AsFloat();
   public int    AsInt();
   public bool   AsBool();
   public bool   IsNull();
+  ```
+  
+  * JsonValue is `JsonObject` 
 
-  /* JsonValue is JsonObject */
-
+  ```csharp
   /// Get the JsonObject, that is a set of k-v pairs, and each value is JsonValue.
   public Dictionary<string, JsonValue> AsObject();
   
@@ -60,9 +73,11 @@ MojoJson is licensed under the [MIT License](https://github.com/scottcgi/MojoJso
   
   /// Get the null from JsonObject by key.  
   public bool AsObjectGetIsNull(string key);
+  ```
 
-  /* JsonValue is JsonArray */
+  * JsonValue is `JsonArray`.
 
+  ```csharp
   /// Get the JsonArray, that is JsonValue list.
   public List<JsonValue> AsArray();
   

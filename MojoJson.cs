@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2017-2019 scott.cgi All Rights Reserved.
+ * Copyright (c) scott.cgi All Rights Reserved.
  * 
  * This source code belongs to project MojoJson, which is hosted on GitHub, and licensed under the MIT License.
  *
@@ -8,8 +8,8 @@
  *
  * Since  : 2017-9-6
  * Author : scott.cgi
- * Version: 1.1.8
- * Update : 2018-2-5
+ * Version: 1.2.0
+ * Update : 2019-12-30
  */
 
 using System.Collections.Generic;
@@ -18,10 +18,11 @@ using System;
 
 namespace MojoJson
 {
-    public static class Json 
+   public static class Json 
     {
-        private const int JsonObjectInitCapacity = 8;
-        private const int JsonArrayInitCapacity  = 8;
+        private const  int  ObjectInitCapacity = 8;
+        private const  int  ArrayInitCapacity  = 8;
+        private static bool isEscapeString;
 
         #region Parse Json API
 
@@ -31,6 +32,14 @@ namespace MojoJson
         public static JsonValue Parse(string json)
         {
             return ParseValue(new Data(json));
+        }
+
+        /// <summary>
+        /// Whether the string value need to be escaped ?
+        /// </summary>
+        public static void SetEscapeString(bool isEscapeString)
+        {
+            Json.isEscapeString = isEscapeString;
         }
 
         #endregion
@@ -127,10 +136,10 @@ namespace MojoJson
         /// </summary>
         private static JsonValue ParseObject(Data data)
         {
-            var jsonObject = new Dictionary<string, JsonValue>(JsonObjectInitCapacity);
+            var jsonObject = new Dictionary<string, JsonValue>(Json.ObjectInitCapacity);
 
             // skip '{'
-            data.index++;
+            ++data.index;
 
             do
             {
@@ -148,34 +157,8 @@ namespace MojoJson
                     data.json[data.index]
                 );
 
-                // skip '"'
-                data.index++;
-
-                var start = data.index;
-
-                while (true)
-                {
-                    switch (data.json[data.index++])
-                    {
-                        // check end '"'
-                        case '"':
-                            break;
-
-                        case '\\':
-                            // skip escaped quotes
-                            data.index++;
-                            continue;
-
-                        default:
-                            continue;
-                    }
-
-                    // already skip the end '"'
-                    break;
-                }
-
                 // get object key string
-                var key = data.json.Substring(start, data.index - start - 1);
+                var key = GetString(data);
 
                 SkipWhiteSpace(data);
 
@@ -188,7 +171,7 @@ namespace MojoJson
                 );
             
                 // skip ':'
-                data.index++;
+                ++data.index;
 
                 // set JsonObject key and value
                 jsonObject.Add(key, ParseValue(data));
@@ -197,7 +180,7 @@ namespace MojoJson
 
                 if (data.json[data.index] == ',')
                 {
-                    data.index++;                   
+                    ++data.index;                   
                 }
                 else
                 {
@@ -214,8 +197,8 @@ namespace MojoJson
             }
             while (true);
 
-            // skip '}' and return after '}'
-            data.index++;
+            // skip '}'
+            ++data.index;
 
             return new JsonValue(JsonType.Object, jsonObject);
         }
@@ -226,10 +209,10 @@ namespace MojoJson
         /// </summary>
         private static JsonValue ParseArray(Data data)
         {
-            var jsonArray = new List<JsonValue>(JsonArrayInitCapacity);
+            var jsonArray = new List<JsonValue>(Json.ArrayInitCapacity);
 
             // skip '['
-            data.index++;
+            ++data.index;
 
             do
             {
@@ -247,7 +230,7 @@ namespace MojoJson
 
                 if (data.json[data.index] == ',')
                 {
-                    data.index++;
+                    ++data.index;
                 }
                 else
                 {
@@ -263,7 +246,7 @@ namespace MojoJson
             while (true);
 
             // skip ']'
-            data.index++;
+            ++data.index;
 
             return new JsonValue(JsonType.Array, jsonArray);
         }
@@ -274,107 +257,15 @@ namespace MojoJson
         /// </summary>
         private static JsonValue ParseString(Data data)
         {
-            // skip '"'
-            data.index++;
-
-            var    start = data.index;
             string str;
 
-            while (true)
+            if (Json.isEscapeString == false)
             {
-                switch (data.json[data.index++])
-                {
-                    // check string end '"' 
-                    case '"':
-                        if (data.sb.Length == 0)
-                        {
-                            // no escaped char just Substring
-                            str = data.json.Substring(start, data.index - start - 1);
-                        }
-                        else
-                        {
-                            str = data.sb.Append(data.json, start, data.index - start - 1).ToString();
-                            // clear for next string
-                            data.sb.Length = 0;
-                        }
-                        break;
-
-                    // check escaped char
-                    case '\\':  
-                    {
-                        var  escapedIndex = data.index;
-                        char c;
-
-                        switch (data.json[data.index++])
-                        {
-                            case '"':
-                                c = '"';
-                                break;
-
-                            case '\\':
-                                c = '\\';
-                                break;
-
-                            case '/':
-                                c = '/';
-                                break;
-
-                            case '\'':
-                                c = '\'';
-                                break;
-
-                            case 'b':
-                                c = '\b';
-                                break;
-
-                            case 'f':
-                                c = '\f';
-                                break;
-
-                            case 'n':
-                                c = '\n';
-                                break;
-
-                            case 'r':
-                                c = '\r';
-                                break;
-
-                            case 't':
-                                c = '\t';
-                                break;
-
-                            case 'u':
-                                c = GetUnicodeCodePoint
-                                    (
-                                        data.json[data.index], 
-                                        data.json[data.index + 1], 
-                                        data.json[data.index + 2], 
-                                        data.json[data.index + 3]
-                                    );
-
-                                // skip code point
-                                data.index += 4;
-                                break;
-
-                            default:
-                                // not support just add in pre string
-                                continue;
-                        }
-
-                        // add pre string and escaped char
-                        data.sb.Append(data.json, start, escapedIndex - start - 1).Append(c);
-
-                        // update pre string start index
-                        start = data.index;
-                        continue;
-                    }
-
-                    default:
-                        continue;
-                }
-
-                // already skip the end '"'
-                break;
+                str = GetString(data);
+            }
+            else
+            {
+                str = GetEscapedString(data);
             }
 
             return new JsonValue(JsonType.String, str);
@@ -420,10 +311,8 @@ namespace MojoJson
             {
                 return new JsonValue(JsonType.Number, num);
             }
-            else
-            {
-                throw new Exception(string.Format("Json ParseNumber error, can not parse string [{0}]", strNum));
-            }
+
+            throw new Exception(string.Format("Json ParseNumber error, can not parse string [{0}]", strNum));
         }
 
 
@@ -440,95 +329,247 @@ namespace MojoJson
                     case '\t':
                     case '\n':
                     case '\r':
-                        data.index++;
+                        ++data.index;
+                        continue;
+                }
+
+                // index point to non-whitespace
+                break;
+            }
+        }
+
+        /// <summary>
+        /// Get the original string value includes escape char.
+        /// </summary>
+        private static string GetString(Data data)
+        {
+            // skip '"'
+            var start = ++data.index;
+
+            while (true)
+            {
+                switch (data.json[data.index++])
+                {
+                    // check end '"'
+                    case '"':
+                        break;
+
+                    case '\\':
+                        // skip escaped quotes
+                        // the escape char may be '\"'，which will break while
+                        ++data.index;
+                        continue;
+
+                    default:
                         continue;
                 }
 
                 break;
             }
+
+            // index after the string end '"' so -1
+            return data.json.Substring(start, data.index - start - 1);
+        }
+
+        /// <summary>
+        /// Get the escaped string value.
+        /// </summary>
+        private static string GetEscapedString(Data data)
+        {
+            // skip '"'
+            var    start = ++data.index;
+            string str;
+
+            while (true)
+            {
+                switch (data.json[data.index++])
+                {
+                    // check string end '"' 
+                    case '"':
+                        if (data.sb.Length == 0)
+                        {
+                            // no escaped char just Substring
+                            str = data.json.Substring(start, data.index - start - 1);
+                        }
+                        else
+                        {
+                            str = data.sb.Append(data.json, start, data.index - start - 1).ToString();
+                            // clear for next string
+                            data.sb.Length = 0;
+                        }
+                        break;
+
+                    // check escaped char
+                    case '\\':
+                        {
+                            var  escapedIndex = data.index;
+                            char c;
+
+                            switch (data.json[data.index++])
+                            {
+                                case '"':
+                                    c = '"';
+                                    break;
+
+                                case '\\':
+                                    c = '\\';
+                                    break;
+
+                                case '/':
+                                    c = '/';
+                                    break;
+
+                                case '\'':
+                                    c = '\'';
+                                    break;
+
+                                case 'b':
+                                    c = '\b';
+                                    break;
+
+                                case 'f':
+                                    c = '\f';
+                                    break;
+
+                                case 'n':
+                                    c = '\n';
+                                    break;
+
+                                case 'r':
+                                    c = '\r';
+                                    break;
+
+                                case 't':
+                                    c = '\t';
+                                    break;
+
+                                case 'u':
+                                    c = GetUnicodeCodePoint(data);
+                                    break;
+
+                                default:
+                                    // not support just add in pre string
+                                    continue;
+                            }
+
+                            // add pre string and escaped char
+                            data.sb.Append(data.json, start, escapedIndex - start - 1).Append(c);
+
+                            // update pre string start index
+                            start = data.index;
+                            continue;
+                        }
+
+                    default:
+                        continue;
+                }
+
+                // index skipped the string end '"'
+                break;
+            }
+
+            return str;
         }
 
 
         /// <summary>
         /// Get the unicode code point.
         /// </summary>
-        private static char GetUnicodeCodePoint(char c1, char c2, char c3, char c4)
+        private static char GetUnicodeCodePoint(Data data)
         {
-            return (char)
-                   (
-                       UnicodeCharToInt(c1) * 0x1000 +
-                       UnicodeCharToInt(c2) * 0x100  +
-                       UnicodeCharToInt(c3) * 0x10   +
-                       UnicodeCharToInt(c4)
-                   );
-        }
+            var index = data.index;
 
-
-        /// <summary>
-        /// Single unicode char convert to int.
-        /// </summary>
-        private static int UnicodeCharToInt(char c)
-        {
-            switch (c)
+            for (var i = 0; i < 4; ++i)
             {
-                case '0':
-                    return 0;
+                char c = data.json[index + i];
 
-                case '1':
-                    return 1;
+                switch (c)
+                {
+                    case '0':
+                        data.unicode[i] = 0;
+                        break;
 
-                case '2':
-                    return 2;
+                    case '1':
+                        data.unicode[i] = 1;
+                        break;
 
-                case '3':
-                    return 3;
+                    case '2':
+                        data.unicode[i] = 2;
+                        break;
 
-                case '4':
-                    return 4;
+                    case '3':
+                        data.unicode[i] = 3;
+                        break;
 
-                case '5':
-                    return 5;
+                    case '4':
+                        data.unicode[i] = 4;
+                        break;
 
-                case '6':
-                    return 6;
+                    case '5':
+                        data.unicode[i] = 5;
+                        break;
 
-                case '7':
-                    return 7;
+                    case '6':
+                        data.unicode[i] = 6;
+                        break;
 
-                case '8':
-                    return 8;
+                    case '7':
+                        data.unicode[i] = 7;
+                        break;
 
-                case '9':
-                    return 9;
+                    case '8':
+                        data.unicode[i] = 8;
+                        break;
 
-                case 'A':
-                case 'a':
-                    return 10;
+                    case '9':
+                        data.unicode[i] = 9;
+                        break;
 
-                case 'B':
-                case 'b':
-                    return 11;
+                    case 'A':
+                    case 'a':
+                        data.unicode[i] = 10;
+                        break;
 
-                case 'C':
-                case 'c':
-                    return 12;
+                    case 'B':
+                    case 'b':
+                        data.unicode[i] = 11;
+                        break;
 
-                case 'D':
-                case 'd':
-                    return 13;
+                    case 'C':
+                    case 'c':
+                        data.unicode[i] = 12;
+                        break;
 
-                case 'E':
-                case 'e':
-                    return 14;
+                    case 'D':
+                    case 'd':
+                        data.unicode[i] = 13;
+                        break;
 
-                case 'F':
-                case 'f':
-                    return 15;
+                    case 'E':
+                    case 'e':
+                        data.unicode[i] = 14;
+                        break;
+
+                    case 'F':
+                    case 'f':
+                        data.unicode[i] = 15;
+                        break;
+
+                    default:
+                        throw new Exception(string.Format("Json Unicode char '{0}' error", c));
+                }
             }
 
-            throw new Exception(string.Format("Json Unicode char '{0}' error", c));
-        }
+            // skip code point
+            data.index += 4;
 
+            return (char) (
+                              (data.unicode[0] << 12) +
+                              (data.unicode[1] <<  8) +
+                              (data.unicode[2] <<  4) +
+                              (data.unicode[3]      )
+                          );
+        }
 
         #endregion
 
@@ -541,13 +582,15 @@ namespace MojoJson
             public string        json;
             public int           index;
             public StringBuilder sb;
+            public int[]         unicode; 
 
 
             public Data(string json)
             {
-                this.json  = json;
-                this.index = 0;
-                this.sb    = new StringBuilder();
+                this.json    = json;
+                this.index   = 0;
+                this.sb      = new StringBuilder();
+                this.unicode = new int[4];
             }
         }
     }
@@ -573,8 +616,8 @@ namespace MojoJson
     public class JsonValue
     {
         public  readonly JsonType type;
-        private object   objectValue;
-        private float    numberValue;
+        private readonly object   objectValue;
+        private readonly float    numberValue;
 
 
         public JsonValue(JsonType type, object value)
@@ -622,10 +665,8 @@ namespace MojoJson
             {
                 return jsonValue;
             }
-            else 
-            {
-                return null;
-            }
+ 
+            return null;
         }
 
 
@@ -641,10 +682,8 @@ namespace MojoJson
             {
                 return jsonValue.AsObject();
             }
-            else 
-            {
-                return null;               
-            }
+            
+            return null;               
         }
 
 
@@ -660,10 +699,8 @@ namespace MojoJson
             {
                 return jsonValue.AsArray();
             }
-            else 
-            {
-                return null;               
-            }
+           
+            return null;               
         }
 
 
@@ -679,10 +716,8 @@ namespace MojoJson
             {
                 return jsonValue.AsString();
             }
-            else 
-            {
-                return null;               
-            }
+            
+            return null;               
         }
 
 
@@ -698,10 +733,8 @@ namespace MojoJson
             {
                 return jsonValue.AsFloat();
             }
-            else 
-            {
-                return defaultValue;               
-            }
+            
+            return defaultValue;               
         }
 
 
@@ -726,10 +759,8 @@ namespace MojoJson
             {
                 return jsonValue.AsInt();
             }
-            else 
-            {
-                return defaultValue;               
-            }
+           
+            return defaultValue;               
         }
 
 
@@ -754,10 +785,8 @@ namespace MojoJson
             {
                 return jsonValue.AsBool();
             }
-            else 
-            {
-                return defaultValue;               
-            }
+           
+            return defaultValue;               
         }
 
 
@@ -781,10 +810,8 @@ namespace MojoJson
             {
                 return jsonValue.IsNull();
             }
-            else 
-            {
-                return false;               
-            }
+            
+            return false;               
         }
 
 
