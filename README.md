@@ -12,6 +12,12 @@ The current implementations as follow:
   
   The core parsing code only 400 lines, and the implementation only use the core .NET lib, and just has one file that can be easily integrated into any C# project.
 
+* For C.  
+  
+  The core parsing code only 300 lines, and the implementation only use the C standard lib, and just has one C file that can be easily integrated into any C project.  
+
+  **Notice**: the only different from C# is that the C code does not support `SetEscapeString` API to handle escape strings.
+
 
 ## License
 
@@ -104,6 +110,42 @@ MojoJson is licensed under the [MIT License](https://github.com/scottcgi/MojoJso
   
   /// Get the null from JsonArray at index.
   public bool AsArrayGetIsNull(int index);  
+  ```
+
+* For C
+  
+  * Parse Json string.
+  ```c
+  JsonValue* value = AJson->Parse(jsonString);
+  ```
+
+  * Free any JsonValue memory.
+  ```c
+  AJson->Destroy(JsonValue* jsonValue);
+  ```
+
+  * JsonValue is **JsonObject**.  
+
+  ```c
+  bool        (*GetBool)  (JsonObject* object, const char* key, bool  defaultValue);
+  int         (*GetInt)   (JsonObject* object, const char* key, int   defaultValue);
+  float       (*GetFloat) (JsonObject* object, const char* key, float defaultValue);
+
+  char*       (*GetString)(JsonObject* object, const char* key, const char* defaultValue);
+  JsonObject* (*GetObject)(JsonObject* object, const char* key);
+  JsonArray*  (*GetArray) (JsonObject* object, const char* key);
+  ```
+
+  * JsonValue is **JsonArray**.  
+
+  ```c
+  bool        (*GetBool)  (JsonArray* array, int index);
+  int         (*GetInt)   (JsonArray* array, int index);
+  float       (*GetFloat) (JsonArray* array, int index);
+
+  char*       (*GetString)(JsonArray* array, int index);
+  JsonObject* (*GetObject)(JsonArray* array, int index);
+  JsonArray*  (*GetArray) (JsonArray* array, int index);
   ```
 
     

@@ -1,3 +1,8 @@
+## v1.2.0+
+_`2020.1.10 UTC+8 11:35`_
+* Add the C code implementation.
+
+
 ## v1.2.0
 _`2020.1.1 UTC+8 11:16`_
 * Optimize unicode string parsing.
