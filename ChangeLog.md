@@ -1,4 +1,10 @@
-## v1.2.0+
+## C# v1.2.2
+_`2020.2.28 UTC+8 10:50`_
+* Change the `Data` type from `class` to `struct`, and use `ref` to pass it.
+* Use keyword `out` inline to follow the compiler hits.
+
+
+## C v1.2.0
 _`2020.1.10 UTC+8 11:35`_
 * Add the C code implementation.
 

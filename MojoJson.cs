@@ -7,9 +7,9 @@
  * GitHub : https://github.com/scottcgi/MojoJson
  *
  * Since  : 2017-9-6
+ * Update : 2020-2-28
  * Author : scott.cgi
- * Version: 1.2.0
- * Update : 2019-12-30
+ * Version: 1.2.2
  */
 
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ using System;
 
 namespace MojoJson
 {
-   public static class Json 
+    public static class Json 
     {
         private const  int  ObjectInitCapacity = 8;
         private const  int  ArrayInitCapacity  = 8;
@@ -31,7 +31,8 @@ namespace MojoJson
         /// </summary>
         public static JsonValue Parse(string json)
         {
-            return ParseValue(new Data(json));
+            var data = new Data(json);
+            return ParseValue(ref data);
         }
 
         /// <summary>
@@ -50,20 +51,20 @@ namespace MojoJson
         /// <summary>
         /// Parse the JsonValue.
         /// </summary>
-        private static JsonValue ParseValue(Data data)
+        private static JsonValue ParseValue(ref Data data)
         {
-            SkipWhiteSpace(data);
+            SkipWhiteSpace(ref data);
 
             switch (data.json[data.index])
             {
                 case '{':
-                    return ParseObject(data);
+                    return ParseObject(ref data);
 
                 case '[':
-                    return ParseArray (data);
+                    return ParseArray (ref data);
 
                 case '"':
-                    return ParseString(data);
+                    return ParseString(ref data);
 
                 case '0':
                 case '1':
@@ -76,7 +77,7 @@ namespace MojoJson
                 case '8':
                 case '9':
                 case '-':
-                    return ParseNumber(data);
+                    return ParseNumber(ref data);
 
                 case 'f':
                     if 
@@ -134,7 +135,7 @@ namespace MojoJson
         /// <summary>
         /// Parse JsonObject.
         /// </summary>
-        private static JsonValue ParseObject(Data data)
+        private static JsonValue ParseObject(ref Data data)
         {
             var jsonObject = new Dictionary<string, JsonValue>(Json.ObjectInitCapacity);
 
@@ -143,7 +144,7 @@ namespace MojoJson
 
             do
             {
-                SkipWhiteSpace(data);
+                SkipWhiteSpace(ref data);
 
                 if (data.json[data.index] == '}')
                 {
@@ -158,9 +159,9 @@ namespace MojoJson
                 );
 
                 // get object key string
-                var key = GetString(data);
+                var key = GetString(ref data);
 
-                SkipWhiteSpace(data);
+                SkipWhiteSpace(ref data);
 
                 DebugTool.Assert
                 (
@@ -174,9 +175,9 @@ namespace MojoJson
                 ++data.index;
 
                 // set JsonObject key and value
-                jsonObject.Add(key, ParseValue(data));
+                jsonObject.Add(key, ParseValue(ref data));
 
-                SkipWhiteSpace(data);
+                SkipWhiteSpace(ref data);
 
                 if (data.json[data.index] == ',')
                 {
@@ -207,7 +208,7 @@ namespace MojoJson
         /// <summary>
         /// Parse JsonArray.
         /// </summary>
-        private static JsonValue ParseArray(Data data)
+        private static JsonValue ParseArray(ref Data data)
         {
             var jsonArray = new List<JsonValue>(Json.ArrayInitCapacity);
 
@@ -216,7 +217,7 @@ namespace MojoJson
 
             do
             {
-                SkipWhiteSpace(data);
+                SkipWhiteSpace(ref data);
 
                 if (data.json[data.index] == ']')
                 {
@@ -224,9 +225,9 @@ namespace MojoJson
                 }
 
                 // add JsonArray item 
-                jsonArray.Add(ParseValue(data));
+                jsonArray.Add(ParseValue(ref data));
 
-                SkipWhiteSpace(data);
+                SkipWhiteSpace(ref data);
 
                 if (data.json[data.index] == ',')
                 {
@@ -255,17 +256,17 @@ namespace MojoJson
         /// <summary>
         /// Parses the JsonString.
         /// </summary>
-        private static JsonValue ParseString(Data data)
+        private static JsonValue ParseString(ref Data data)
         {
             string str;
 
             if (Json.isEscapeString == false)
             {
-                str = GetString(data);
+                str = GetString(ref data);
             }
             else
             {
-                str = GetEscapedString(data);
+                str = GetEscapedString(ref data);
             }
 
             return new JsonValue(JsonType.String, str);
@@ -275,7 +276,7 @@ namespace MojoJson
         /// <summary>
         /// Parses the JsonNumber.
         /// </summary>
-        private static JsonValue ParseNumber(Data data)
+        private static JsonValue ParseNumber(ref Data data)
         {
             var start = data.index;
                 
@@ -305,21 +306,20 @@ namespace MojoJson
             }
 
             var   strNum = data.json.Substring(start, data.index - start);
-            float num;
 
-            if (float.TryParse(strNum, out num))
+            if (float.TryParse(strNum, out float num))
             {
                 return new JsonValue(JsonType.Number, num);
             }
 
-            throw new Exception(string.Format("Json ParseNumber error, can not parse string [{0}]", strNum));
+            throw new Exception(string.Format("Json ParseNumber error, cannot parse string [{0}]", strNum));
         }
 
 
         /// <summary>
         /// Skip the white space.
         /// </summary>
-        private static void SkipWhiteSpace(Data data)
+        private static void SkipWhiteSpace(ref Data data)
         {
             while (true)
             {
@@ -341,7 +341,7 @@ namespace MojoJson
         /// <summary>
         /// Get the original string value includes escape char.
         /// </summary>
-        private static string GetString(Data data)
+        private static string GetString(ref Data data)
         {
             // skip '"'
             var start = ++data.index;
@@ -374,7 +374,7 @@ namespace MojoJson
         /// <summary>
         /// Get the escaped string value.
         /// </summary>
-        private static string GetEscapedString(Data data)
+        private static string GetEscapedString(ref Data data)
         {
             // skip '"'
             var    start = ++data.index;
@@ -444,7 +444,7 @@ namespace MojoJson
                                     break;
 
                                 case 'u':
-                                    c = GetUnicodeCodePoint(data);
+                                    c = GetUnicodeCodePoint(ref data);
                                     break;
 
                                 default:
@@ -475,7 +475,7 @@ namespace MojoJson
         /// <summary>
         /// Get the unicode code point.
         /// </summary>
-        private static char GetUnicodeCodePoint(Data data)
+        private static char GetUnicodeCodePoint(ref Data data)
         {
             var index = data.index;
 
@@ -574,16 +574,12 @@ namespace MojoJson
         #endregion
 
 
-//----------------------------------------------------------------------------------------------------------------------
-
-
-        private class Data
+        private struct Data
         {
-            public string        json;
-            public int           index;
-            public StringBuilder sb;
-            public int[]         unicode; 
-
+            public readonly string        json;
+            public int                    index;
+            public readonly StringBuilder sb;
+            public readonly int[]         unicode; 
 
             public Data(string json)
             {
@@ -596,9 +592,6 @@ namespace MojoJson
     }
 
 
-//----------------------------------------------------------------------------------------------------------------------
-
-
     public enum JsonType
     {
         Object,
@@ -608,9 +601,6 @@ namespace MojoJson
         Bool,
         Null,
     }
-
-
-//----------------------------------------------------------------------------------------------------------------------
 
 
     public class JsonValue
@@ -632,9 +622,6 @@ namespace MojoJson
             this.type        = type;
             this.numberValue = value;
         }
-
-
-//----------------------------------------------------------------------------------------------------------------------
 
 
         #region JsonObject API
@@ -659,13 +646,11 @@ namespace MojoJson
             DebugTool.Assert(this.type == JsonType.Object, "JsonValue type is not Object !");
             var dict = this.objectValue as Dictionary<string, JsonValue>;
 
-            JsonValue jsonValue;
-
-            if (dict.TryGetValue(key, out jsonValue))
+            if (dict.TryGetValue(key, out JsonValue jsonValue))
             {
                 return jsonValue;
             }
- 
+
             return null;
         }
 
@@ -818,9 +803,6 @@ namespace MojoJson
         #endregion
 
 
-//----------------------------------------------------------------------------------------------------------------------
-
-
         #region JsonArray API
 
 
@@ -910,9 +892,6 @@ namespace MojoJson
         #endregion
 
 
-//----------------------------------------------------------------------------------------------------------------------
-
-
         #region Other Json value API
 
 
@@ -967,9 +946,6 @@ namespace MojoJson
 
         #endregion
     }
-
-
-//----------------------------------------------------------------------------------------------------------------------
 
 
     internal static class DebugTool
