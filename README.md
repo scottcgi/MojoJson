@@ -16,7 +16,7 @@ The current implementations as follow:
   
   The core parsing code only 300 lines, and the implementation only use the C standard lib, and just has one C file that can be easily integrated into any C project.  
 
-  **Notice**: the only different from C# is that the C code does not support `SetEscapeString` API to handle escape strings.
+  **Note**: the only different from C# is that the C code does not support `SetEscapeString` API to convert escaped strings, so the escaped strings will remain original state in C JsonValue.
 
 
 ## License
