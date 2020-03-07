@@ -642,6 +642,30 @@ struct AJsonArray AJsonArray[1] =
 // Json parser
 //----------------------------------------------------------------------------------------------------------------------
 
+static void SkipComments(const char** jsonPtr)
+{
+    const char* json = *jsonPtr;
+    switch (*json) {
+        case '*':
+        {
+            while (!(*json == '*' && (*(json+1) == '/'))) {
+                json++;
+            }
+            // skip */
+            json += 2;
+        }
+            break;
+        case '/':
+        {
+            while (*json != '\n' && *json != '\0') {
+                json++;
+            }
+            json++;
+        }
+            break;
+    }
+    *jsonPtr = json;
+}
 
 static void SkipWhiteSpace(const char** jsonPtr)
 {
@@ -656,6 +680,10 @@ static void SkipWhiteSpace(const char** jsonPtr)
             case '\n':
             case '\r':
                 ++json;
+                continue;
+            case '/':
+                ++json;
+                SkipComments(&json);
                 continue;
             default:
                 break;
