@@ -305,7 +305,7 @@ namespace MojoJson
                 break;
             }
 
-            var   strNum = data.json.Substring(start, data.index - start);
+            var strNum = data.json.Substring(start, data.index - start);
 
             if (float.TryParse(strNum, out float num))
             {
