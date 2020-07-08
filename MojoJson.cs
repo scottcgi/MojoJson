@@ -626,7 +626,6 @@ namespace MojoJson
 
         #region JsonObject API
 
-
         /// <summary>
         /// Use JsonValue as JsonObject.
         /// </summary>
@@ -799,12 +798,10 @@ namespace MojoJson
             return false;               
         }
 
-
         #endregion
 
 
         #region JsonArray API
-
 
         /// <summary>
         /// Use JsonValue as JsonArray.
@@ -888,12 +885,10 @@ namespace MojoJson
             return this.AsArrayGet(index).IsNull();
         }
 
-
         #endregion
 
 
         #region Other Json value API
-
 
         /// <summary>
         /// Get JsonValue as string.
@@ -942,7 +937,6 @@ namespace MojoJson
         {
             return this.type == JsonType.Null;
         }
-
 
         #endregion
     }
