@@ -1,12 +1,20 @@
-## C# v1.2.2
+## v1.2.3
+_`2021.2.5 UTC+8 10:13`_
+* **The C Code**
+  * Fix the parse key bug of ParseObject.
+
+* **The C# Code**
+  * Code formatting of #region.  
+
+## v1.2.2
 _`2020.2.28 UTC+8 10:50`_
-* Change the `Data` type from `class` to `struct`, and use `ref` to pass it.
-* Use keyword `out` inline to follow the compiler hits.
+* **The C# Code**
+  * Change the `Data` type from `class` to `struct`, and use `ref` to pass it.
+  * Use keyword `out` inline to follow the compiler hits.
 
-
-## C v1.2.0
 _`2020.1.10 UTC+8 11:35`_
-* Add the C code implementation.
+* **The C Code**
+  * Add the C code implementation.
 
 
 ## v1.2.0

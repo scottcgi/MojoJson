@@ -7,9 +7,9 @@
  * GitHub : https://github.com/scottcgi/MojoJson
  *
  * Since  : 2013-1-26
- * Update : 2020-1-8
+ * Update : 2021-2-6
  * Author : scott.cgi
- * Version: 1.2.0
+ * Version: 1.2.3
  */
 
  

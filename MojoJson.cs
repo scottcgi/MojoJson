@@ -9,7 +9,7 @@
  * Since  : 2017-9-6
  * Update : 2020-2-28
  * Author : scott.cgi
- * Version: 1.2.2
+ * Version: 1.2.3
  */
 
 using System.Collections.Generic;
@@ -26,8 +26,6 @@ namespace MojoJson
 
 
         #region Parse Json API
-
-
         /// <summary>
         /// Parse json string.
         /// </summary>
@@ -44,14 +42,10 @@ namespace MojoJson
         {
             Json.isEscapeString = isEscapeString;
         }
-
-
         #endregion
 
 
         #region Parse Json 
-
-
         /// <summary>
         /// Parse the JsonValue.
         /// </summary>
@@ -574,8 +568,6 @@ namespace MojoJson
                               (data.unicode[3]      )
                           );
         }
-
-
         #endregion
 
 
@@ -630,8 +622,6 @@ namespace MojoJson
 
 
         #region JsonObject API
-
-
         /// <summary>
         /// Use JsonValue as JsonObject.
         /// </summary>
@@ -803,14 +793,10 @@ namespace MojoJson
             
             return false;               
         }
-
-
         #endregion
 
 
         #region JsonArray API
-
-
         /// <summary>
         /// Use JsonValue as JsonArray.
         /// </summary>
@@ -892,14 +878,10 @@ namespace MojoJson
         {
             return this.AsArrayGet(index).IsNull();
         }
-
-
         #endregion
 
 
-        #region Other Json value API
-
-
+        #region Other Json Value API
         /// <summary>
         /// Get JsonValue as string.
         /// </summary>
@@ -947,8 +929,6 @@ namespace MojoJson
         {
             return this.type == JsonType.Null;
         }
-
-
         #endregion
     }
 
