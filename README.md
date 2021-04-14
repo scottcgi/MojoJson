@@ -2,7 +2,7 @@
 
 MojoJson is an **extremely simple** and **super fast** JSON parser. The parser supports all **standard** Json formats and provides **simple** APIs for visit different types of the Json values. Also the **core algorithm** can be easily implemented by various programming languages.
 
-* Released version in [releases](https://github.com/scottcgi/MojoJson/releases).
+* Released versions in [releases](https://github.com/scottcgi/MojoJson/releases).
 * Release changes in [ChangeLog](https://github.com/scottcgi/MojoJson/blob/master/ChangeLog.md).
 
 
