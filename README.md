@@ -156,4 +156,4 @@ The original implementation and core algorithm came from the [Json.h](https://gi
 
 ## Support
 
-If the source code is **useful** for you, maybe you could buy me a coffee via [Paypal-0.99](https://www.paypal.me/PayScottcgi/0.99) :coffee:
+If the source code is **useful** or **helpful** for you, maybe buy me a coffee via **Sponsor Button**.
